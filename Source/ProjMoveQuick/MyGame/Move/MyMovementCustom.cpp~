@@ -14,8 +14,6 @@ void UMyMovementCustom::TickComponent(float DeltaTime, ELevelTick InLevelTick, F
 
 	Super::TickComponent(DeltaTime, InLevelTick, ThisTickFunction);
 
-	M_TO_BE_IMPL(TEXT("Change velocity according to flags"));
-
 	{
 		checkf(UpdatedComponent, TEXT("UpdatedComponent DO must be set"));
 		const bool bEnableCollision = false;
@@ -34,11 +32,11 @@ void UMyMovementCustom::MoveUpdatedComponent_ByFlags(const FVector& InDelta, con
 	bool bUseSafeUpdate = (Config.Flags & EMyMoveComponentFlags::UseSafeUpdate) != EMyMoveComponentFlags::None;
 	if(bUseSafeUpdate)
 	{
-		SafeMoveUpdatedComponent(InDelta, InNewRotation, bInSweep, &OutHit, InTeleport);
+		SafeMoveUpdatedComponent(InDelta, InNewRotation, bInSweep, OutHit, InTeleport);
 	}
 	else
 	{
-		MoveUpdatedComponent(InDelta, InNewRotation, bInSweep, OutHit, InTeleport);
+		MoveUpdatedComponent(InDelta, InNewRotation, bInSweep, &OutHit, InTeleport);
 	}
 }
 

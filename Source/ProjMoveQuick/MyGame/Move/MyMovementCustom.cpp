@@ -14,8 +14,6 @@ void UMyMovementCustom::TickComponent(float DeltaTime, ELevelTick InLevelTick, F
 
 	Super::TickComponent(DeltaTime, InLevelTick, ThisTickFunction);
 
-	M_TO_BE_IMPL(TEXT("Change velocity according to flags"));
-
 	{
 		checkf(UpdatedComponent, TEXT("UpdatedComponent DO must be set"));
 		const bool bEnableCollision = false;
