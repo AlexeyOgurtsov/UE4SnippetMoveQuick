@@ -62,17 +62,23 @@ public:
 
 	/**
 	* Returns name and class of the object.
-	* WARNING: nullptr object is invalid.
+	* @note: nullptr object is invalid.
 	*/
 	UFUNCTION(BlueprintPure, Category = Log)
 	static FString GetNameAndClass(const UObject* InObject);
 
 	/**
 	* Returns name and class of the object.
-	* WARNING: nullptr object is valid.
+	* @note: nullptr object is valid.
 	*/
 	UFUNCTION(BlueprintPure, Category = Log)
 	static FString GetNameAndClassSafe(const UObject* InObject);
+
+	/**
+	* Returns name and class of the object pointed to by the given weak object ptr.
+	* @note: nullptr object is valid.
+	*/
+	static FString GetWeakNameAndClassSafe(const TWeakObjectPtr<UObject>& InObject, bool bInThreadSafe = false);
 
 	/**
 	* Returns name and class of the object, enclosed in brackets.
@@ -233,7 +239,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Log)
 	static void LogKeyedNameClassSafe(const FString& InKey, const UObject* InObject);
 	static void LogKeyedNameClassSafeC(const TCHAR* InKey, const UObject* InObject);
-	
+
+	UFUNCTION(BlueprintCallable, Category = Log)
+	static void LogKeyedNameClassSafeIf(bool bInShouldLog, const FString& InKey, const UObject* InObject); 
+	static void LogKeyedNameClassSafeIfC(bool bInShouldLog, const TCHAR* InKey, const UObject* InObject);
+
+	static void LogWeakKeyedNameClassSafe(const FString& InKey, const TWeakObjectPtr<UObject>& InObject, bool bInThreadSafe = false);
+	static void LogWeakKeyedNameClassSafeC(const TCHAR* InKey, const TWeakObjectPtr<UObject>& InObject, bool bInThreadSafe = false);
+
+	static void LogWeakKeyedNameClassSafeIf(bool bInShouldLog, const FString& InKey, const TWeakObjectPtr<UObject>& InObject, bool bInThreadSafe = false);
+	static void LogWeakKeyedNameClassSafeIfC(bool bInShouldLog, const TCHAR* InKey, const TWeakObjectPtr<UObject>& InObject, bool bInThreadSafe = false);
+
 	UFUNCTION(BlueprintPure, Category = Log)
 	static FString GetYesNo(bool bYes);
 

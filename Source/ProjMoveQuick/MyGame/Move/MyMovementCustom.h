@@ -1,11 +1,11 @@
 #pragma once
 
-#include "GameFramework/MovementComponent.h"
+#include "Util/TestUtil/TUMovementComponent.h"
 #include "MyMovementTypes.h"
 #include "MyMovementCustom.generated.h"
 
 UCLASS()
-class UMyMovementCustom : public UMovementComponent
+class UMyMovementCustom : public UTUMovementComponent
 {
 	GENERATED_BODY()
 

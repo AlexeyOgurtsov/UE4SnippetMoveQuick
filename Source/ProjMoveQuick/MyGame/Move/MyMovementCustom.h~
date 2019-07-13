@@ -1,11 +1,11 @@
 #pragma once
 
-#include "GameFramework/MovementComponent.h"
+#include "Util/TestUtil/TUMovementComponent.h"
 #include "MyMovementTypes.h"
 #include "MyMovementCustom.generated.h"
 
 UCLASS()
-class UMyMovementCustom : public UMovementComponent
+class UMyMovementCustom : public UTUMovementComponent
 {
 	GENERATED_BODY()
 
@@ -24,7 +24,7 @@ public:
 	FVector GetMyVelocity() const { return MyVelocity; }
 
 private:
-	void MoveUpdatedComponent_ByFlags(const FVector& InDelta, const FQuat& InNewRotation, bool bInSweep, FHitResult* OutHit = nullptr, ETeleportType InTeleport = ETeleportType::None);
+	void MoveUpdatedComponent_ByFlags(const FVector& InDelta, const FQuat& InNewRotation, bool bInSweep, FHitResult& OutHit, ETeleportType InTeleport = ETeleportType::None);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Config, Meta=(AllowPrivateAccess = true))
 	FMyMoveComponentConfig Config;

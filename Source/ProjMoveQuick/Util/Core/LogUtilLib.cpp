@@ -59,6 +59,57 @@ void ULogUtilLib::LogKeyedNameClassSafeC(const TCHAR* InKey, const UObject* cons
 	M_LOG(TEXT("%s"), *GetKeyedNameAndClassC(InKey, InObject));
 }
 
+void ULogUtilLib::LogKeyedNameClassSafeIf(bool const bInShouldLog, const FString& InKey, const UObject* const InObject)
+{
+	LogKeyedNameClassSafeIfC(bInShouldLog, *InKey, InObject);
+}
+
+void ULogUtilLib::LogKeyedNameClassSafeIfC(bool const bInShouldLog, const TCHAR* const InKey, const UObject* const InObject)
+{
+	if(bInShouldLog)
+	{
+		LogKeyedNameClassSafeC(InKey, InObject);
+	}
+}
+
+void ULogUtilLib::LogWeakKeyedNameClassSafe(const FString& InKey, const TWeakObjectPtr<UObject>& InObject, bool bInThreadSafe)
+{
+	LogWeakKeyedNameClassSafeC(*InKey, InObject, bInThreadSafe);
+}
+
+void ULogUtilLib::LogWeakKeyedNameClassSafeC(const TCHAR* InKey, const TWeakObjectPtr<UObject>& InObject, bool bInThreadSafe)
+{
+	M_LOG(TEXT("%s"), InKey, *GetWeakNameAndClassSafe(InObject, bInThreadSafe));
+}
+
+void ULogUtilLib::LogWeakKeyedNameClassSafeIf(bool bInShouldLog, const FString& InKey, const TWeakObjectPtr<UObject>& InObject, bool bInThreadSafe)
+{
+	LogWeakKeyedNameClassSafeIfC(bInShouldLog, *InKey, InObject, bInThreadSafe);
+}
+
+void ULogUtilLib::LogWeakKeyedNameClassSafeIfC(bool bInShouldLog, const TCHAR* InKey, const TWeakObjectPtr<UObject>& InObject, bool bInThreadSafe)
+{
+	if(bInShouldLog)
+	{
+		LogWeakKeyedNameClassSafeC(InKey, InObject, bInThreadSafe);
+	}
+}
+
+FString ULogUtilLib::GetWeakNameAndClassSafe(const TWeakObjectPtr<UObject>& InObject, bool bInThreadSafe)
+{
+	if(InObject.IsValid(/*bEverIfPendingKill*/true, bInThreadSafe))
+	{
+		return FString(TEXT("{invalid_weak_ptr}"));
+	}
+
+	const UObject* const Obj = InObject.GetEvenIfUnreachable();
+	checkf(Obj, TEXT("Returned object ptr for weak object must be valid (because we already tested it earlier in the function)"));
+
+	FString const FlagsString = GetObjectFlagsString(Obj->GetFlags());
+	return FString::Printf(TEXT("%s [%s]"), *GetNameAndClassSafe(Obj), *FlagsString);
+
+}
+
 FString ULogUtilLib::GetYesNo(bool const bYes)
 {
 	return bYes ? FString(TEXT("YES")) : FString(TEXT("no"));
