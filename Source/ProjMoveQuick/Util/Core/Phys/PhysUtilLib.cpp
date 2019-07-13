@@ -1,4 +1,7 @@
 #include "PhysUtilLib.h"
+#include "GameFramework/Actor.h" // For casts
+#include "Components/PrimitiveComponent.h" // For casts
+#include "PhysicalMaterials/PhysicalMaterial.h" // For casts
 #include "Util/Core/LogUtilLib.h"
 
 

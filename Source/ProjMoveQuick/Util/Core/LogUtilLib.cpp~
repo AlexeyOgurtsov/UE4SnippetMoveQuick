@@ -72,44 +72,6 @@ void ULogUtilLib::LogKeyedNameClassSafeIfC(bool const bInShouldLog, const TCHAR*
 	}
 }
 
-void ULogUtilLib::LogWeakKeyedNameClassSafe(const FString& InKey, const TWeakObjectPtr<const UObject>& InObject, bool bInThreadSafe)
-{
-	LogWeakKeyedNameClassSafeC(*InKey, InObject, bInThreadSafe);
-}
-
-void ULogUtilLib::LogWeakKeyedNameClassSafeC(const TCHAR* InKey, const TWeakObjectPtr<const UObject>& InObject, bool bInThreadSafe)
-{
-	M_LOG(TEXT("%s"), InKey, *GetWeakNameAndClassSafe(InObject, bInThreadSafe));
-}
-
-void ULogUtilLib::LogWeakKeyedNameClassSafeIf(bool bInShouldLog, const FString& InKey, const TWeakObjectPtr<const UObject>& InObject, bool bInThreadSafe)
-{
-	LogWeakKeyedNameClassSafeIfC(bInShouldLog, *InKey, InObject, bInThreadSafe);
-}
-
-void ULogUtilLib::LogWeakKeyedNameClassSafeIfC(bool bInShouldLog, const TCHAR* InKey, const TWeakObjectPtr<const UObject>& InObject, bool bInThreadSafe)
-{
-	if(bInShouldLog)
-	{
-		LogWeakKeyedNameClassSafeC(InKey, InObject, bInThreadSafe);
-	}
-}
-
-FString ULogUtilLib::GetWeakNameAndClassSafe(const TWeakObjectPtr<const UObject>& InObject, bool bInThreadSafe)
-{
-	if(InObject.IsValid(/*bEverIfPendingKill*/true, bInThreadSafe))
-	{
-		return FString(TEXT("{invalid_weak_ptr}"));
-	}
-
-	const UObject* const Obj = InObject.GetEvenIfUnreachable();
-	checkf(Obj, TEXT("Returned object ptr for weak object must be valid (because we already tested it earlier in the function)"));
-
-	FString const FlagsString = GetObjectFlagsString(Obj->GetFlags());
-	return FString::Printf(TEXT("%s [%s]"), *GetNameAndClassSafe(Obj), *FlagsString);
-
-}
-
 FString ULogUtilLib::GetYesNo(bool const bYes)
 {
 	return bYes ? FString(TEXT("YES")) : FString(TEXT("no"));

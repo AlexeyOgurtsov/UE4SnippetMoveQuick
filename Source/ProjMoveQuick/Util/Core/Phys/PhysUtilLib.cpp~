@@ -1,4 +1,7 @@
 #include "PhysUtilLib.h"
+#include "GameFramework/Actor.h" // For casts
+#include "Components/PrimitiveComponent.h" // For casts
+#include "PhysicalMaterials/PhysicalMaterial.h" // For casts
 #include "Util/Core/LogUtilLib.h"
 
 
@@ -30,12 +33,9 @@ void UPhysUtilLib::LogHitResult(const FHitResult& InHitResult, ELogHitFlags cons
 
 	ULogUtilLib::LogInt32C(TEXT("Item"), InHitResult.Item);
 
-M_TO_BE_IMPL(TEXT("Log phys material"));
-{
-ULogUtilLib::LogWeakKeyedNameClassSafeIfC(bExtOwner, TEXT("PhysMaterial"), InHitResult.PhysMaterial);
-ULogUtilLib::LogWeakKeyedNameClassSafeC(TEXT("Actor"), InHitResult.Actor);
- ULogUtilLib::LogWeakKeyedNameClassSafeC(TEXT("Component"), InHitResult.Component);
-}
+	ULogUtilLib::LogWeakKeyedNameClassSafeIfC(bExtOwner, TEXT("PhysMaterial"), InHitResult.PhysMaterial);
+	ULogUtilLib::LogWeakKeyedNameClassSafeC(TEXT("Actor"), InHitResult.Actor);
+	ULogUtilLib::LogWeakKeyedNameClassSafeC(TEXT("Component"), InHitResult.Component);
 
 	ULogUtilLib::LogNameIfC(bExtLocation, TEXT("BoneName"), InHitResult.BoneName);
 	ULogUtilLib::LogNameIfC(bExtLocation, TEXT("MyBoneName"), InHitResult.MyBoneName);
