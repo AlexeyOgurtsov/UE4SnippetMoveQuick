@@ -3,6 +3,7 @@
 
 #include "Util/Core/LogUtilLib.h"
 
+#include "GameFramework/PawnMovementComponent.h" // For casts
 #include "Engine/World.h" // UWorld::GetDeltaSeconds()
 
 namespace
@@ -81,75 +82,88 @@ void ATUPlayerController::SetGameInputEnableState(bool bInEnabled)
 	}
 }
 
-void ATUPlayerController::Axis_LookPitchChecked(float const InValue)
-{
-	if(ShouldProcessGameInput())
-	{
-		Axis_LookPitch(InValue);
-	}
-}
-
-void ATUPlayerController::Axis_LookYawChecked(float const InValue)
-{
-	if(ShouldProcessGameInput())
-	{
-		Axis_LookYaw(InValue);
-	}
-}
-
-void ATUPlayerController::Axis_LookPitch(float const InValue)
-{
-	if(InValue != 0.0F)
-	{
-		AddPitchInput(InValue * GetWorld()->GetDeltaSeconds() * LOOK_PITCH_SPEED);
-	}
-}
-
-void ATUPlayerController::Axis_LookYaw(float const InValue)
-{
-	if(InValue != 0.0F)
-	{
-		AddYawInput(InValue * GetWorld()->GetDeltaSeconds() * LOOK_YAW_SPEED);
-	}
-}
-
-void ATUPlayerController::Axis_ForwardChecked(float const InValue)
+void ATUPlayerController::Axis_LookPitchChecked(float const InAmount)
 {
 	if(APawn* const P = GetPawnIfShouldInGameContextLogged(TEXT(__FUNCTION__)))
 	{
-		Axis_Forward(InValue);
+		Axis_LookPitch(P, InAmount);
 	}
 }
 
-void ATUPlayerController::Axis_RightChecked(float const InValue)
+void ATUPlayerController::Axis_LookYawChecked(float const InAmount)
 {
 	if(APawn* const P = GetPawnIfShouldInGameContextLogged(TEXT(__FUNCTION__)))
 	{
-		Axis_Right(InValue);
+		Axis_LookYaw(P, InAmount);
 	}
 }
 
-void ATUPlayerController::Axis_UpChecked(float const InValue)
+void ATUPlayerController::Axis_LookPitch(APawn* const P, float const InAmount)
+{
+	checkf(P, TEXT("When calling %s pawn must be valid non-NULL pointer"), TEXT(__FUNCTION__));
+	if(InAmount != 0.0F)
+	{
+		LogLookIfShould(P, InAmount);
+		AddPitchInput(InAmount * GetWorld()->GetDeltaSeconds() * LOOK_PITCH_SPEED);
+	}
+}
+
+
+void ATUPlayerController::Axis_LookYaw(APawn* const P, float const InAmount)
+{
+	checkf(P, TEXT("When calling %s pawn must be valid non-NULL pointer"), TEXT(__FUNCTION__));
+	if(InAmount != 0.0F)
+	{
+		LogLookIfShould(P, InAmount);
+		AddYawInput(InAmount * GetWorld()->GetDeltaSeconds() * LOOK_YAW_SPEED);
+	}
+}
+
+void ATUPlayerController::LogLookIfShould(const APawn* const P, float InAmount)
+{
+	M_LOG_IF(HasAnyInputDebugFlagsSet(ETUPCInputDebugFlags::LogLook), TEXT("LookPitch action: Amount=%f (MovementComponent={%s})"), InAmount, *ULogUtilLib::GetNameAndClassSafe(P->GetMovementComponent()));
+}
+
+void ATUPlayerController::Axis_ForwardChecked(float const InAmount)
 {
 	if(APawn* const P = GetPawnIfShouldInGameContextLogged(TEXT(__FUNCTION__)))
 	{
-		Axis_Up(InValue);
+		Axis_Forward(P, InAmount);
 	}
 }
 
-void ATUPlayerController::Axis_Forward(float const InValue)
+void ATUPlayerController::Axis_RightChecked(float const InAmount)
 {
-	ActionMoveGeneral(GetPawn()->GetActorForwardVector(), InValue);
+	if(APawn* const P = GetPawnIfShouldInGameContextLogged(TEXT(__FUNCTION__)))
+	{
+		Axis_Right(P, InAmount);
+	}
 }
 
-void ATUPlayerController::Axis_Right(float const InValue)
+void ATUPlayerController::Axis_UpChecked(float const InAmount)
 {
-	ActionMoveGeneral(GetPawn()->GetActorRightVector(), InValue);
+	if(APawn* const P = GetPawnIfShouldInGameContextLogged(TEXT(__FUNCTION__)))
+	{
+		Axis_Up(P, InAmount);
+	}
 }
 
-void ATUPlayerController::Axis_Up(float const InValue)
+void ATUPlayerController::Axis_Forward(APawn* const P, float const InAmount)
 {
-	ActionMoveGeneral(GetPawn()->GetActorUpVector(), InValue);
+	checkf(P, TEXT("When calling %s pawn must be non-NULL pointer"), TEXT(__FUNCTION__));
+	ActionMoveGeneral(P, P->GetActorForwardVector(), InAmount);
+}
+
+void ATUPlayerController::Axis_Right(APawn* const P, float const InAmount)
+{
+	checkf(P, TEXT("When calling %s pawn must be non-NULL pointer"), TEXT(__FUNCTION__));
+	ActionMoveGeneral(P, P->GetActorRightVector(), InAmount);
+}
+
+void ATUPlayerController::Axis_Up(APawn* const P, float const InAmount)
+{
+	checkf(P, TEXT("When calling %s pawn must be non-NULL pointer"), TEXT(__FUNCTION__));
+	ActionMoveGeneral(P, P->GetActorUpVector(), InAmount);
 }
 
 void ATUPlayerController::Action_UseChecked()
@@ -401,12 +415,16 @@ void ATUPlayerController::ActionSelectGeneral(const int32 InIndex)
 	M_LOG(TEXT("Select action N %d: skipping (empty)"), InIndex);
 }
 
-void ATUPlayerController::ActionMoveGeneral(const FVector& InDirection, const float InAmount)
+void ATUPlayerController::ActionMoveGeneral(APawn* const P, const FVector& InDirection, const float InAmount)
 {
+	checkf(P, TEXT("When calling %s Pawn must be valid non-NULL pointer"), TEXT(__FUNCTION__));
+
 	if(InAmount != 0.0F)
 	{
-		M_LOG_ERROR_IF(GetPawn()->GetMovementComponent() == nullptr, TEXT("Movement component is nullptr for controlled pawn"));
-		GetPawn()->AddMovementInput(InDirection, MOVE_AMOUNT_COEFF * InAmount);
+		M_LOG_IF(HasAnyInputDebugFlagsSet(ETUPCInputDebugFlags::LogMovement), TEXT("Movement action: Direction=%s Amount=%f (Movement={%s})"), *InDirection.ToString(), InAmount, *ULogUtilLib::GetNameAndClassSafe(P->GetMovementComponent()));
+
+		M_LOG_WARN_IF(GetPawn()->GetMovementComponent() == nullptr, TEXT("Movement component is nullptr for controlled pawn"));
+		P->AddMovementInput(InDirection, MOVE_AMOUNT_COEFF * InAmount);
 	}
 }
 

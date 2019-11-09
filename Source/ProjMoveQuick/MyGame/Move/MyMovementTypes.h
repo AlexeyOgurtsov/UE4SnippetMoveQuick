@@ -18,6 +18,12 @@ struct FMyMoveComponentConfig
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, Category = Config)
-	EMyMoveComponentFlags Flags = EMyMoveComponentFlags::Default;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Config, Meta=(Bitmask, BitmaskEnum="EMyMoveComponentFlags"))
+	uint8 Flags = static_cast<uint8>(EMyMoveComponentFlags::Default);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Config)
+	bool bEnableCollision = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Config)
+	float Speed = 300.0F;
 };
