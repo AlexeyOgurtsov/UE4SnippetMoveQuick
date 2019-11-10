@@ -44,6 +44,10 @@ void UMyPawnMovementCustom::TickComponent(float DeltaTime, enum ELevelTick TickT
 	{
 		FHitResult Hit;
 		MoveUpdatedComponent_ByFlags(Delta, NewQuat, Config.bEnableCollision, /**Out**/Hit);
+		if(Hit.bBlockingHit)
+		{
+			HandleImpact(Hit, Hit.Time, Delta);
+		}
 	}
 
 	// Finalize
@@ -58,6 +62,15 @@ void UMyPawnMovementCustom::ApplyControlInputToVelocity(float DeltaTime)
 	Velocity = Velocity + (DeltaTime * ControlAcceleration * Config.Speed);
 
 	ConsumeInputVector();
+}
+
+void UMyPawnMovementCustom::HandleImpact(const FHitResult& Hit, float TimeSlice, const FVector& MoveDelta)
+{
+	// WARNING! Super::HandleImpact is empty (at the time of writing this code), but who knows...
+	Super::HandleImpact(Hit, TimeSlice, MoveDelta);	
+
+	Velocity = FVector::ZeroVector;
+	UpdateComponentVelocity();
 }
 
 void UMyPawnMovementCustom::MoveUpdatedComponent_ByFlags(const FVector& InDelta, const FQuat& InNewRotation, bool bInSweep, FHitResult& OutHit, ETeleportType InTeleport)

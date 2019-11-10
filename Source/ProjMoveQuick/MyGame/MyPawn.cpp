@@ -11,7 +11,7 @@
 * 1. Floating pawn movement: does it work by default (seems like not)?
 */
 
-namespace
+namespace MyPawnImpl
 {
 	namespace Config
 	{
@@ -19,7 +19,9 @@ namespace
 		constexpr float ACCELERATION = 0.0F;
 		constexpr float DECELERATION = 0.0F;
 	} // Config
-} // anonymous
+} // MyPawnImpl
+
+using namespace MyPawnImpl;
 
 MyPawnType::AMyPawn()
 {

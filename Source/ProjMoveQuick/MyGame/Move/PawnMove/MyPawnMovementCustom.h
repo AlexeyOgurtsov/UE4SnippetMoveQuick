@@ -14,7 +14,8 @@ public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	virtual void ApplyControlInputToVelocity(float DeltaTime);
+	virtual void HandleImpact(const FHitResult& Hit, float TimeSlice = 0.f, const FVector& MoveDelta = FVector::ZeroVector);
+	
 	
 	/** GetConfig*/
 	UFUNCTION(BlueprintPure, Category=Config)
@@ -24,6 +25,7 @@ public:
 	}
 
 private:	
+	void ApplyControlInputToVelocity(float DeltaTime);
 	void MoveUpdatedComponent_ByFlags(const FVector& InDelta, const FQuat& InNewRotation, bool bInSweep, FHitResult& OutHit, ETeleportType InTeleport = ETeleportType::None);
 
 	/** MoveConfig*/

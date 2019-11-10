@@ -8,14 +8,15 @@
 
 #include "Util/TestUtil/VisibleActorConfig.h"
 
-namespace 
+namespace StdProjectileMovementActorImpl
 {
 	namespace Config
 	{
 		constexpr float SPEED = 1000;
 		constexpr float MAX_SPEED = SPEED;
 	} // Config
-} // anonymous
+} // StdProjectileMovementActorImpl
+using namespace StdProjectileMovementActorImpl;
 
 AStdProjectileMovementActor::AStdProjectileMovementActor()
 {
